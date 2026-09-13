@@ -3,69 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Acoustic Tabla Studio</title>
+  <title>Veer & Raudra Tabla Engine</title>
   <style>
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background: #0b0f19; color: #f1f5f9; padding: 18px; max-width: 520px; margin: 0 auto; }
-    h1 { font-size: 1.3rem; text-align: center; margin-bottom: 4px; font-weight: 700; color: #f8fafc; }
+    body { background: #07090e; color: #f1f5f9; padding: 18px; max-width: 520px; margin: 0 auto; }
+    h1 { font-size: 1.3rem; text-align: center; margin-bottom: 2px; font-weight: 800; color: #f43f5e; text-transform: uppercase; letter-spacing: 1px; }
     p.sub { font-size: 0.8rem; color: #94a3b8; text-align: center; margin-bottom: 16px; }
-    .card { background: #131d31; border-radius: 14px; padding: 18px; border: 1px solid #1e293b; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+    .card { background: #111625; border-radius: 14px; padding: 18px; border: 1px solid #1f293d; box-shadow: 0 8px 30px rgba(244,63,94,0.12); }
     label { font-size: 0.8rem; color: #94a3b8; font-weight: 600; display: block; margin-top: 10px; }
-    textarea, select, input { width: 100%; padding: 10px 12px; background: #0b0f19; color: #f8fafc; border: 1px solid #334155; border-radius: 8px; font-size: 0.9rem; margin-top: 5px; }
-    textarea { height: 75px; resize: vertical; }
+    textarea, select, input { width: 100%; padding: 10px 12px; background: #07090e; color: #f8fafc; border: 1px solid #334155; border-radius: 8px; font-size: 0.9rem; margin-top: 5px; }
+    textarea { height: 80px; resize: vertical; }
     .row { display: flex; gap: 8px; margin-top: 4px; }
     .controls { display: flex; gap: 8px; margin-top: 14px; }
-    .btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; font-size: 0.95rem; cursor: pointer; text-align: center; }
-    .btn-play { background: #3b82f6; color: white; }
-    .btn-stop { background: #ef4444; color: white; }
-    .btn-export { background: #10b981; color: white; margin-top: 10px; width: 100%; }
-    .btn:disabled { background: #334155; cursor: not-allowed; color: #64748b; }
+    .btn { flex: 1; padding: 13px; border: none; border-radius: 8px; font-weight: 700; font-size: 0.95rem; cursor: pointer; text-align: center; text-transform: uppercase; }
+    .btn-play { background: #e11d48; color: white; }
+    .btn-stop { background: #475569; color: white; }
+    .btn-export { background: #059669; color: white; margin-top: 10px; width: 100%; }
+    .btn:disabled { background: #1e293b; cursor: not-allowed; color: #475569; }
     .quick-taals { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; margin-bottom: 4px; }
-    .tag { background: #1e293b; font-size: 0.75rem; padding: 5px 9px; border-radius: 16px; cursor: pointer; color: #60a5fa; border: 1px solid #334155; }
-    #status { font-size: 0.8rem; color: #38bdf8; text-align: center; margin-top: 10px; min-height: 1.2em; font-weight: 500; }
-    .progress-bar { width: 100%; background: #0b0f19; height: 6px; border-radius: 3px; margin-top: 8px; overflow: hidden; }
-    .progress-fill { height: 100%; background: #3b82f6; width: 0%; transition: width 0.15s; }
+    .tag { background: #1e293b; font-size: 0.75rem; padding: 6px 10px; border-radius: 16px; cursor: pointer; color: #fb7185; border: 1px solid #374151; font-weight: 600; }
+    #status { font-size: 0.8rem; color: #fb7185; text-align: center; margin-top: 10px; min-height: 1.2em; font-weight: 600; }
+    .progress-bar { width: 100%; background: #07090e; height: 6px; border-radius: 3px; margin-top: 8px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #e11d48; width: 0%; transition: width 0.15s; }
   </style>
 </head>
 <body>
 
-  <h1>Acoustic Tabla Studio</h1>
-  <p class="sub">100+ Multi-Velocity Layers &bull; Round-Robin Anti-Machinegun</p>
+  <h1>Raudra & Veer Tabla</h1>
+  <p class="sub">Aggressive Transient Punch &bull; Fast Rolls &bull; Rashmirathi Meter</p>
 
   <div class="card">
     <div id="status">Loading acoustic strokes...</div>
     <div class="progress-bar"><div id="progress" class="progress-fill"></div></div>
 
-    <label>Presets:</label>
+    <label>High-Energy Presets (Tap to load):</label>
     <div class="quick-taals">
-      <span class="tag" onclick="setTaal('teentaal')">Teentaal (16)</span>
-      <span class="tag" onclick="setTaal('keherwa')">Keherwa (8)</span>
-      <span class="tag" onclick="setTaal('dadra')">Dadra (6)</span>
-      <span class="tag" onclick="setTaal('rupak')">Rupak (7)</span>
-      <span class="tag" onclick="setTaal('jhaptal')">Jhaptal (10)</span>
-      <span class="tag" onclick="setTaal('tirakit')">Tirakit Drill</span>
+      <span class="tag" onclick="setPreset('rashmirathi')">Rashmirathi Battle (Drut)</span>
+      <span class="tag" onclick="setPreset('tandav')">Raudra Tandav (Heavy)</span>
+      <span class="tag" onclick="setPreset('veer_march')">Veer Senani March</span>
+      <span class="tag" onclick="setPreset('drut_teen')">Fast Teentaal (Drut)</span>
+      <span class="tag" onclick="setPreset('kaida_storm')">Tirakit Storm Roll</span>
     </div>
 
-    <label for="bolInput">Taal / Bols:</label>
-    <textarea id="bolInput">Dha Dhin Dhin Dha | Dha Dhin Dhin Dha | Dha Tin Tin Ta | Ta Dhin Dhin Dha</textarea>
+    <label for="bolInput">Bols (Use hyphens for fast rolls: Ti-Re-Ki-Ta):</label>
+    <textarea id="bolInput">Dha Dhit Dhit Dha | Ti-Re-Ki-Ta Dha Kat Ta | Dha Dhit Dhit Dha | Ti-Re-Ki-Ta Dhun Tun Dha</textarea>
 
     <div class="row">
       <div style="flex: 1;">
-        <label for="bpm">BPM (Speed):</label>
-        <input type="number" id="bpm" value="135" min="40" max="320" />
+        <label for="bpm">BPM (Tempo):</label>
+        <input type="number" id="bpm" value="180" min="60" max="320" />
+      </div>
+      <div style="flex: 1;">
+        <label for="punch">Transient Punch:</label>
+        <select id="punch">
+          <option value="brutal" selected>Raudra (Hard Punch)</option>
+          <option value="heavy">Veer (Heavy Drum)</option>
+          <option value="natural">Natural Dynamic</option>
+        </select>
       </div>
       <div style="flex: 1;">
         <label for="tanpura">Tanpura Drone:</label>
         <select id="tanpura">
-          <option value="none">Off</option>
-          <option value="sa_pa">Sa-Pa in G</option>
-        </select>
-      </div>
-      <div style="flex: 1;">
-        <label for="groove">Human Drift:</label>
-        <select id="groove">
-          <option value="studio">Strict Studio</option>
-          <option value="live" selected>Live Baithak</option>
+          <option value="none">Mute</option>
+          <option value="sa_pa" selected>Sa-Pa in G</option>
         </select>
       </div>
     </div>
@@ -73,24 +73,39 @@
     <div class="controls">
       <button class="btn btn-play" id="playBtn" onclick="togglePlay()" disabled>Play</button>
     </div>
-    <button class="btn btn-export" id="exportBtn" onclick="exportWav()" disabled>Download Master WAV</button>
+    <button class="btn btn-export" id="exportBtn" onclick="exportWav()" disabled>Export Aggressive WAV</button>
   </div>
 
   <script>
-    const taals = {
-      teentaal: "Dha Dhin Dhin Dha | Dha Dhin Dhin Dha | Dha Tin Tin Ta | Ta Dhin Dhin Dha",
-      keherwa: "Dha Ge Na Ti | Na Ka Dhin Na",
-      dadra: "Dha Dhin Na | Dha Tin Na",
-      rupak: "Tin Tin Na | Dhin Na | Dhin Na",
-      jhaptal: "Dhin Na | Dhin Dhin Na | Tin Na | Dhin Dhin Na",
-      tirakit: "Dha Ti Ra Ki Ta Ta Ka Ti Ra Ki Ta | Dha Dha Te Te Ta Ka Ti Ra Ki Ta"
+    // Battle and high-tension poetic meters
+    const presets = {
+      rashmirathi: {
+        text: "Dha Dhit Dhit Dha | Ti-Re-Ki-Ta Dha Kat Ta | Dha Dhit Dhit Dha | Ti-Re-Ki-Ta Dhun Tun Dha",
+        bpm: 185
+      },
+      tandav: {
+        text: "Dha Dhun Dhit Kat | Dha-Dha Te-Te Ta-Ka Ti-Re-Ki-Ta | Dha Dhun Dhit Kat | Tun Tun Dhun Dha",
+        bpm: 170
+      },
+      veer_march: {
+        text: "Dha Kat Dha Kat | Ti-Re-Ki-Ta Dha Dha Kat | Dha Kat Dha Kat | Ti-Re-Ki-Ta Dhun Dhun Dha",
+        bpm: 195
+      },
+      drut_teen: {
+        text: "Dha Dhin Dhin Dha | Dha Dhin Dhin Dha | Dha Tin Tin Ta | Ta Dhin Dhin Dha",
+        bpm: 210
+      },
+      kaida_storm: {
+        text: "Dha-Te-Te Dha-Te-Te Dha Dha Te-Te | Ta-Ka Ti-Re-Ki-Ta Dha Dha Te-Te | Ta-Te-Te Ta-Te-Te Ta Ta Te-Te | Ta-Ka Ti-Re-Ki-Ta Dha Dha Te-Te",
+        bpm: 190
+      }
     };
 
-    function setTaal(key) {
-      document.getElementById('bolInput').value = taals[key];
+    function setPreset(key) {
+      document.getElementById('bolInput').value = presets[key].text;
+      document.getElementById('bpm').value = presets[key].bpm;
     }
 
-    // Exact catalog based on your verified audio files
     const manifest = {
       dha: Array.from({ length: 10 }, (_, i) => `Bol/Dha/Dha${String(i + 1).padStart(2, '0')}.wav`),
       dhin: Array.from({ length: 10 }, (_, i) => `Bol/Dhin/Dhin${String(i + 1).padStart(2, '0')}.wav`),
@@ -108,26 +123,11 @@
       acc_ghungru: Array.from({ length: 5 }, (_, i) => `Bol/Acc/Ghungru${String(i + 1).padStart(2, '0')}.wav`)
     };
 
-    // Maps common spelling variants to canonical sound categories
     const aliasMap = {
-      dha: "dha",
-      dhin: "dhin",
-      dhit: "dhit",
-      dhun: "dhun",
-      ga: "ga",
-      ge: "ge",
-      ka: "ke",
-      ke: "ke",
-      kat: "ke",
-      ki: "ke",
-      na: "na",
-      ta: "ta",
-      ti: "ti",
-      te: "ti",
-      re: "ti",
-      ra: "ti",
-      tin: "tin",
-      tun: "tun"
+      dha: "dha", dhin: "dhin", dhit: "dhit", dhun: "dhun",
+      ga: "ga", ge: "ge", ka: "ke", ke: "ke", kat: "ke", ki: "ke",
+      na: "na", ta: "ta", ti: "ti", te: "ti", re: "ti", ra: "ti",
+      tin: "tin", tun: "tun"
     };
 
     const buffers = {};
@@ -136,13 +136,38 @@
     let isPlaying = false;
     let timerId = null;
     let tanpuraNode = null;
+    let masterCompressor = null;
 
     function initAudio() {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 
-    // Load, decode, and store all sound banks
+    // Heavy studio punch chain (Compressor for sharp attack & bass weight)
+    function setupAudioChain(ctx) {
+      const comp = ctx.createDynamicsCompressor();
+      const punchMode = document.getElementById("punch") ? document.getElementById("punch").value : "brutal";
+
+      if (punchMode === "brutal") {
+        comp.threshold.setValueAtTime(-18, ctx.currentTime);
+        comp.knee.setValueAtTime(4, ctx.currentTime);
+        comp.ratio.setValueAtTime(8, ctx.currentTime);
+        comp.attack.setValueAtTime(0.003, ctx.currentTime); // Fast punch
+        comp.release.setValueAtTime(0.08, ctx.currentTime);
+      } else if (punchMode === "heavy") {
+        comp.threshold.setValueAtTime(-14, ctx.currentTime);
+        comp.ratio.setValueAtTime(5, ctx.currentTime);
+        comp.attack.setValueAtTime(0.005, ctx.currentTime);
+        comp.release.setValueAtTime(0.12, ctx.currentTime);
+      } else {
+        comp.threshold.setValueAtTime(-8, ctx.currentTime);
+        comp.ratio.setValueAtTime(2.5, ctx.currentTime);
+      }
+
+      comp.connect(ctx.destination);
+      return comp;
+    }
+
     async function loadSampleLibrary() {
       const statusEl = document.getElementById("status");
       const progressEl = document.getElementById("progress");
@@ -160,29 +185,27 @@
             buffers[path] = await audioCtx.decodeAudioData(ab);
             loaded++;
           }
-        } catch (err) {
-          // Pass silently if single file fails
-        }
+        } catch (err) {}
         const pct = Math.round(((i + 1) / allFiles.length) * 100);
         progressEl.style.width = pct + "%";
-        statusEl.innerText = `Loading acoustic samples (${loaded}/${allFiles.length})...`;
+        statusEl.innerText = `Loading acoustic strokes: ${loaded}/${allFiles.length}`;
       }
 
       if (loaded > 0) {
-        statusEl.innerText = `✓ Ready (${loaded} acoustic files mapped)`;
-        statusEl.style.color = "#4ade80";
+        statusEl.innerText = `✓ Raudra Engine Armed (${loaded} strokes mapped)`;
+        statusEl.style.color = "#fb7185";
         document.getElementById("playBtn").disabled = false;
         document.getElementById("exportBtn").disabled = false;
       } else {
-        statusEl.innerText = "Error: Could not load files from ./Bol/ folder";
+        statusEl.innerText = "Error: Check ./Bol/ folder in your repo";
         statusEl.style.color = "#f87171";
       }
     }
 
     window.addEventListener("DOMContentLoaded", loadSampleLibrary);
 
-    // Dynamic selection using Velocity Layering + Round-Robin
-    function resolveBuffer(bol, velocityTier) {
+    // Forces selection of high-energy, louder hit files (07 to 11 range)
+    function resolveBuffer(bol, isAccent) {
       bol = bol.toLowerCase().replace(/[^a-z]/g, '');
       const cat = aliasMap[bol] || Object.keys(manifest).find(k => bol.startsWith(k));
       const pool = manifest[cat];
@@ -191,46 +214,74 @@
       const available = pool.filter(p => buffers[p]);
       if (!available.length) return null;
 
-      // Slice pool by velocity: Soft (lower index), Medium, Accent (higher index)
+      // Aggressive tier: Biased toward loud and aggressive recordings
       let tierSlice = available;
       if (available.length >= 6) {
-        if (velocityTier === "soft") tierSlice = available.slice(0, Math.ceil(available.length * 0.4));
-        else if (velocityTier === "accent") tierSlice = available.slice(Math.floor(available.length * 0.6));
-        else tierSlice = available.slice(Math.floor(available.length * 0.3), Math.ceil(available.length * 0.7));
+        if (isAccent) {
+          tierSlice = available.slice(Math.floor(available.length * 0.5)); // Heavy accented samples
+        } else {
+          tierSlice = available.slice(Math.floor(available.length * 0.25)); // Skip weak ghost hits
+        }
       }
 
       if (!tierSlice.length) tierSlice = available;
 
-      // Round-robin selection inside the tier
       if (rrPointers[cat] === undefined) rrPointers[cat] = 0;
       const file = tierSlice[rrPointers[cat] % tierSlice.length];
       rrPointers[cat]++;
       return buffers[file];
     }
 
-    function playStroke(ctx, destination, bol, time, gainLevel, velocityTier) {
-      const buffer = resolveBuffer(bol, velocityTier);
+    function playStroke(ctx, destination, bol, time, gainLevel, isAccent) {
+      const buffer = resolveBuffer(bol, isAccent);
       if (!buffer) return;
 
       const src = ctx.createBufferSource();
       src.buffer = buffer;
 
       const gain = ctx.createGain();
-      gain.gain.setValueAtTime(Math.min(1.0, gainLevel), time);
+      gain.gain.setValueAtTime(gainLevel, time);
 
       src.connect(gain);
       gain.connect(destination);
       src.start(time);
     }
 
-    function parseBols() {
+    // Tokenizer supporting both full beats and sub-divided rapid rolls (e.g. Ti-Re-Ki-Ta)
+    function parseEvents(bpm) {
       const text = document.getElementById('bolInput').value;
-      return text.replace(/[|,]/g, ' ').split(/\s+/).filter(b => b.trim().length > 0);
-    }
+      const tokens = text.replace(/[|,]/g, ' ').split(/\s+/).filter(b => b.trim().length > 0);
+      const beatSec = 60 / bpm;
+      const events = [];
+      let cursor = 0;
 
-    function getJitter(style) {
-      if (style === 'studio') return 0;
-      return (Math.random() - 0.5) * 0.012; // +/- 6ms human drift
+      tokens.forEach((tok, tokIdx) => {
+        const isSam = (tokIdx === 0);
+        if (tok.includes('-')) {
+          // Rapid roll subdivision (splits beat evenly)
+          const subs = tok.split('-').filter(s => s.trim().length > 0);
+          const subDuration = beatSec / subs.length;
+          subs.forEach((subBol, sIdx) => {
+            events.push({
+              bol: subBol,
+              offset: cursor + (sIdx * subDuration),
+              gain: (sIdx === 0) ? 0.95 : 0.85,
+              accent: (sIdx === 0 && isSam)
+            });
+          });
+        } else {
+          // Standard full beat
+          events.push({
+            bol: tok,
+            offset: cursor,
+            gain: isSam ? 1.15 : 0.95,
+            accent: isSam || (tokIdx % 4 === 0)
+          });
+        }
+        cursor += beatSec;
+      });
+
+      return { events, totalDuration: cursor };
     }
 
     function togglePlay() {
@@ -243,103 +294,82 @@
     }
 
     function startPlay() {
-      const bols = parseBols();
-      if (!bols.length) return;
+      const bpm = parseInt(document.getElementById('bpm').value) || 180;
+      const parsed = parseEvents(bpm);
+      if (!parsed.events.length) return;
 
       isPlaying = true;
       document.getElementById('playBtn').innerText = "Stop";
       document.getElementById('playBtn').className = "btn btn-stop";
 
-      const bpm = parseInt(document.getElementById('bpm').value) || 135;
-      const groove = document.getElementById('groove').value;
-      const tanpuraMode = document.getElementById('tanpura').value;
-      const beatSec = 60 / bpm;
-      let currentIndex = 0;
+      masterCompressor = setupAudioChain(audioCtx);
 
-      // Continuous Tanpura Drone layer
-      if (tanpuraMode === "sa_pa" && buffers["Bol/Acc/Tanpura_SaPa_G.wav"]) {
+      // Drone
+      if (document.getElementById('tanpura').value === "sa_pa" && buffers["Bol/Acc/Tanpura_SaPa_G.wav"]) {
         tanpuraNode = audioCtx.createBufferSource();
         tanpuraNode.buffer = buffers["Bol/Acc/Tanpura_SaPa_G.wav"];
         tanpuraNode.loop = true;
         const tanGain = audioCtx.createGain();
-        tanGain.gain.value = 0.35;
+        tanGain.gain.value = 0.28;
         tanpuraNode.connect(tanGain);
-        tanGain.connect(audioCtx.destination);
+        tanGain.connect(masterCompressor);
         tanpuraNode.start(0);
       }
 
-      function step() {
+      function loopRhythm() {
         if (!isPlaying) return;
-
-        // Dynamics: Sam is accent, structural quarters medium, subdivisions soft
-        let tier = "normal";
-        let gain = 0.8;
-        if (currentIndex === 0) {
-          tier = "accent";
-          gain = 1.0;
-        } else if (currentIndex % 4 !== 0) {
-          tier = "soft";
-          gain = 0.68;
-        }
-
-        const scheduleTime = Math.max(audioCtx.currentTime, audioCtx.currentTime + getJitter(groove));
-        playStroke(audioCtx, audioCtx.destination, bols[currentIndex], scheduleTime, gain, tier);
-
-        currentIndex = (currentIndex + 1) % bols.length;
-        timerId = setTimeout(step, beatSec * 1000);
+        const now = audioCtx.currentTime;
+        parsed.events.forEach(ev => {
+          playStroke(audioCtx, masterCompressor, ev.bol, now + ev.offset, ev.gain, ev.accent);
+        });
+        timerId = setTimeout(loopRhythm, parsed.totalDuration * 1000);
       }
-      step();
+
+      loopRhythm();
     }
 
     function stopPlay() {
       isPlaying = false;
       clearTimeout(timerId);
       if (tanpuraNode) {
-        try { tanpuraNode.stop(); } catch (e) {}
+        try { tanpuraNode.stop(); } catch(e) {}
         tanpuraNode = null;
       }
       document.getElementById('playBtn').innerText = "Play";
       document.getElementById('playBtn').className = "btn btn-play";
     }
 
-    // Render uncompressed offline master WAV
+    // High-impact offline master WAV export
     async function exportWav() {
-      const bols = parseBols();
-      if (!bols.length) return;
+      const bpm = parseInt(document.getElementById('bpm').value) || 180;
+      const parsed = parseEvents(bpm);
+      if (!parsed.events.length) return;
 
-      const bpm = parseInt(document.getElementById('bpm').value) || 135;
-      const groove = document.getElementById('groove').value;
-      const tanpuraMode = document.getElementById('tanpura').value;
-      const beatSec = 60 / bpm;
-      const totalDuration = (bols.length * beatSec) + 1.5;
+      const totalDuration = parsed.totalDuration + 1.2;
       const sampleRate = 44100;
-
       const offlineCtx = new OfflineAudioContext(2, Math.ceil(sampleRate * totalDuration), sampleRate);
+      const comp = setupAudioChain(offlineCtx);
 
-      // Mix Tanpura into WAV export if enabled
-      if (tanpuraMode === "sa_pa" && buffers["Bol/Acc/Tanpura_SaPa_G.wav"]) {
+      if (document.getElementById('tanpura').value === "sa_pa" && buffers["Bol/Acc/Tanpura_SaPa_G.wav"]) {
         const drone = offlineCtx.createBufferSource();
         drone.buffer = buffers["Bol/Acc/Tanpura_SaPa_G.wav"];
         drone.loop = true;
-        const g = offlineCtx.createGain();
-        g.gain.value = 0.35;
-        drone.connect(g);
-        g.connect(offlineCtx.destination);
+        const tg = offlineCtx.createGain();
+        tg.gain.value = 0.28;
+        drone.connect(tg);
+        tg.connect(comp);
         drone.start(0);
       }
 
-      bols.forEach((bol, i) => {
-        let tier = (i === 0) ? "accent" : (i % 4 !== 0) ? "soft" : "normal";
-        let gain = (i === 0) ? 1.0 : (i % 4 !== 0) ? 0.68 : 0.8;
-        let playTime = Math.max(0, (i * beatSec) + getJitter(groove));
-        playStroke(offlineCtx, offlineCtx.destination, bol, playTime, gain, tier);
+      parsed.events.forEach(ev => {
+        playStroke(offlineCtx, comp, ev.bol, ev.offset, ev.gain, ev.accent);
       });
 
       const buffer = await offlineCtx.startRendering();
       const wavBlob = bufferToWave(buffer, buffer.length);
       const a = document.createElement("a");
       a.href = URL.createObjectURL(wavBlob);
-      a.download = "master_tabla_track.wav";
+      a.download = "raudra_veer_tabla.wav";
       a.click();
     }
 
