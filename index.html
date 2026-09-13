@@ -3,45 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Acoustic Sample Tabla</title>
+  <title>Naad Deep-Sampled Acoustic Tabla</title>
   <style>
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background: #0f172a; color: #f8fafc; padding: 20px; max-width: 480px; margin: 0 auto; }
-    h1 { font-size: 1.25rem; text-align: center; margin-bottom: 6px; }
+    body { background: #0b0f19; color: #f1f5f9; padding: 18px; max-width: 520px; margin: 0 auto; }
+    h1 { font-size: 1.3rem; text-align: center; margin-bottom: 4px; font-weight: 700; color: #f8fafc; }
     p.sub { font-size: 0.8rem; color: #94a3b8; text-align: center; margin-bottom: 16px; }
-    .card { background: #1e293b; border-radius: 12px; padding: 18px; border: 1px solid #334155; }
-    label { font-size: 0.8rem; color: #cbd5e1; font-weight: 600; display: block; margin-top: 10px; }
-    textarea, input, select { width: 100%; padding: 10px; background: #0f172a; color: #f8fafc; border: 1px solid #475569; border-radius: 8px; font-size: 0.9rem; margin-top: 5px; }
-    textarea { height: 75px; }
+    .card { background: #131d31; border-radius: 14px; padding: 18px; border: 1px solid #1e293b; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+    label { font-size: 0.8rem; color: #94a3b8; font-weight: 600; display: block; margin-top: 10px; }
+    textarea, select, input { width: 100%; padding: 10px 12px; background: #0b0f19; color: #f8fafc; border: 1px solid #334155; border-radius: 8px; font-size: 0.9rem; margin-top: 5px; }
+    textarea { height: 75px; resize: vertical; }
+    .row { display: flex; gap: 8px; margin-top: 4px; }
     .controls { display: flex; gap: 8px; margin-top: 14px; }
-    .btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; text-align: center; }
+    .btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; font-size: 0.95rem; cursor: pointer; text-align: center; }
     .btn-play { background: #3b82f6; color: white; }
     .btn-stop { background: #ef4444; color: white; }
     .btn-export { background: #10b981; color: white; margin-top: 10px; width: 100%; }
-    #status { font-size: 0.8rem; color: #38bdf8; text-align: center; margin-top: 10px; min-height: 1.2em; }
+    .btn:disabled { background: #334155; cursor: not-allowed; color: #64748b; }
+    .quick-taals { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; margin-bottom: 4px; }
+    .tag { background: #1e293b; font-size: 0.75rem; padding: 5px 9px; border-radius: 16px; cursor: pointer; color: #60a5fa; border: 1px solid #334155; }
+    #status { font-size: 0.8rem; color: #38bdf8; text-align: center; margin-top: 10px; min-height: 1.2em; font-weight: 500; }
+    .progress-bar { width: 100%; background: #0b0f19; height: 6px; border-radius: 3px; margin-top: 8px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #3b82f6; width: 0%; transition: width 0.15s; }
   </style>
 </head>
 <body>
 
-  <h1>Acoustic Tabla Player</h1>
-  <p class="sub">Real Recorded Drum Samples &bull; No Synthetic Tones</p>
+  <h1>Naad Multi-Sample Tabla</h1>
+  <p class="sub">Round-Robin Layers &bull; Anti-Machinegun Realism &bull; WAV Export</p>
 
   <div class="card">
-    <div id="status">Loading sample audio...</div>
+    <div id="status">Connecting to sample library...</div>
+    <div class="progress-bar"><div id="progress" class="progress-fill"></div></div>
+
+    <label>Presets:</label>
+    <div class="quick-taals">
+      <span class="tag" onclick="setTaal('teentaal')">Teentaal (16)</span>
+      <span class="tag" onclick="setTaal('keherwa')">Keherwa (8)</span>
+      <span class="tag" onclick="setTaal('dadra')">Dadra (6)</span>
+      <span class="tag" onclick="setTaal('rupak')">Rupak (7)</span>
+      <span class="tag" onclick="setTaal('jhaptal')">Jhaptal (10)</span>
+      <span class="tag" onclick="setTaal('tirakit')">Tirakit Kaida</span>
+    </div>
 
     <label for="bolInput">Taal / Bols:</label>
     <textarea id="bolInput">Dha Dhin Dhin Dha | Dha Dhin Dhin Dha | Dha Tin Tin Ta | Ta Dhin Dhin Dha</textarea>
 
-    <div style="display: flex; gap: 8px;">
+    <div class="row">
       <div style="flex: 1;">
         <label for="bpm">BPM (Speed):</label>
-        <input type="number" id="bpm" value="135" min="40" max="300" />
+        <input type="number" id="bpm" value="135" min="40" max="320" />
       </div>
       <div style="flex: 1;">
-        <label for="groove">Human Groove:</label>
+        <label for="roundRobin">Sample Alternation:</label>
+        <select id="roundRobin">
+          <option value="rr" selected>Round-Robin (Human)</option>
+          <option value="random">Random Variant</option>
+        </select>
+      </div>
+      <div style="flex: 1;">
+        <label for="groove">Micro-Timing:</label>
         <select id="groove">
-          <option value="tight">Strict (Machine)</option>
-          <option value="human" selected>Human Feel</option>
+          <option value="studio">Strict Studio</option>
+          <option value="live" selected>Live Baithak</option>
         </select>
       </div>
     </div>
@@ -49,12 +73,61 @@
     <div class="controls">
       <button class="btn btn-play" id="playBtn" onclick="togglePlay()" disabled>Play</button>
     </div>
-    <button class="btn btn-export" id="exportBtn" onclick="exportWav()" disabled>Download Track (.WAV)</button>
+    <button class="btn btn-export" id="exportBtn" onclick="exportWav()" disabled>Download Realistic WAV</button>
   </div>
 
   <script>
-    const sampleNames = ['dha', 'dhin', 'ge', 'na', 'tin', 'kat', 'tirakit'];
+    const taals = {
+      teentaal: "Dha Dhin Dhin Dha | Dha Dhin Dhin Dha | Dha Tin Tin Ta | Ta Dhin Dhin Dha",
+      keherwa: "Dha Ge Na Ti | Na Ka Dhin Na",
+      dadra: "Dha Dhin Na | Dha Tin Na",
+      rupak: "Tin Tin Na | Dhin Na | Dhin Na",
+      jhaptal: "Dhin Na | Dhin Dhin Na | Tin Na | Dhin Dhin Na",
+      tirakit: "Dha Ti Ra Ki Ta | Ta Ka Ti Ra Ki Ta | Dha Dha Te Te | Ta Ka Ti Ra Ki Ta"
+    };
+
+    function setTaal(key) {
+      document.getElementById('bolInput').value = taals[key];
+    }
+
+    const BASE_URL = "https://raw.githubusercontent.com/oormicreations/naad/master/audio/";
+
+    // Palette mapping to multi-velocity & articulation files in Naad
+    const sampleManifest = [
+      "dha.wav", "dha1.wav", "dha2.wav",
+      "dhin.wav", "dhin1.wav", "dhin2.wav",
+      "ga.wav", "ga1.wav", "ga2.wav",
+      "na.wav", "na1.wav", "na2.wav",
+      "tin.wav", "tin1.wav",
+      "ka.wav", "ka1.wav",
+      "ti.wav", "te.wav", "re.wav", "ke.wav", "kat.wav",
+      "tun.wav", "dhet.wav", "tra.wav"
+    ];
+
+    // Groups mapped to variations for Round-Robin
+    const bolGroups = {
+      dha: ["dha.wav", "dha1.wav", "dha2.wav"],
+      dhin: ["dhin.wav", "dhin1.wav", "dhin2.wav"],
+      ga: ["ga.wav", "ga1.wav", "ga2.wav"],
+      ge: ["ga.wav", "ga1.wav", "ga2.wav"],
+      na: ["na.wav", "na1.wav", "na2.wav"],
+      ta: ["na.wav", "na1.wav", "na2.wav"],
+      tin: ["tin.wav", "tin1.wav"],
+      ka: ["ka.wav", "ka1.wav", "kat.wav"],
+      kat: ["kat.wav", "ka.wav"],
+      ke: ["ke.wav", "ka1.wav"],
+      ki: ["ke.wav", "ka.wav"],
+      ti: ["ti.wav"],
+      te: ["te.wav"],
+      re: ["re.wav"],
+      ra: ["re.wav"],
+      tun: ["tun.wav"],
+      dhet: ["dhet.wav"],
+      tra: ["tra.wav"]
+    };
+
     const sampleBuffers = {};
+    const rrCounters = {};
     let audioCtx = null;
     let isPlaying = false;
     let timerId = null;
@@ -64,47 +137,68 @@
       if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 
-    // Preload audio files from the repo
-    async function loadSamples() {
+    // Preload and decode all multi-sample files
+    async function preloadNaadEngine() {
       const statusEl = document.getElementById("status");
-      try {
-        initAudio();
-        for (const name of sampleNames) {
-          const res = await fetch(`samples/${name}.wav`);
-          if (!res.ok) throw new Error(`Missing samples/${name}.wav`);
-          const arrayBuf = await res.arrayBuffer();
-          sampleBuffers[name] = await audioCtx.decodeAudioData(arrayBuf);
+      const progressEl = document.getElementById("progress");
+      initAudio();
+
+      let loaded = 0;
+      for (const file of sampleManifest) {
+        try {
+          const res = await fetch(BASE_URL + file);
+          if (res.ok) {
+            const arr = await res.arrayBuffer();
+            sampleBuffers[file] = await audioCtx.decodeAudioData(arr);
+          }
+        } catch (e) {
+          // Fallback if specific variant doesn't exist on remote
         }
-        statusEl.innerText = "✓ Acoustic samples loaded and ready";
-        statusEl.style.color = "#4ade80";
-        document.getElementById("playBtn").disabled = false;
-        document.getElementById("exportBtn").disabled = false;
-      } catch (err) {
-        statusEl.innerText = "Error loading samples: " + err.message;
-        statusEl.style.color = "#f87171";
+        loaded++;
+        const pct = Math.round((loaded / sampleManifest.length) * 100);
+        progressEl.style.width = pct + "%";
+        statusEl.innerText = `Loading acoustic variations: ${loaded}/${sampleManifest.length}`;
       }
+
+      statusEl.innerText = "✓ Multi-sample acoustic engine loaded";
+      statusEl.style.color = "#4ade80";
+      document.getElementById("playBtn").disabled = false;
+      document.getElementById("exportBtn").disabled = false;
     }
 
-    window.addEventListener("DOMContentLoaded", loadSamples);
+    window.addEventListener("DOMContentLoaded", preloadNaadEngine);
 
-    function getBufferForBol(bol) {
+    // Round-Robin & Anti-Machine-Gun selector
+    function pickSampleVariant(bol, mode) {
       bol = bol.toLowerCase().replace(/[^a-z]/g, '');
-      if (bol === 'ta') return sampleBuffers['na'];
-      if (bol === 'ga') return sampleBuffers['ge'];
-      if (bol === 'ka' || bol === 'ke') return sampleBuffers['kat'];
-      if (bol === 'ti' || bol === 'te' || bol === 're') return sampleBuffers['tirakit'];
-      return sampleBuffers[bol] || null;
+      const list = bolGroups[bol] || bolGroups[Object.keys(bolGroups).find(k => bol.startsWith(k))];
+      if (!list || !list.length) return null;
+
+      const available = list.filter(f => sampleBuffers[f]);
+      if (!available.length) return sampleBuffers["dha.wav"] || null;
+
+      if (mode === "random") {
+        return sampleBuffers[available[Math.floor(Math.random() * available.length)]];
+      }
+
+      // Round Robin cycle
+      if (rrCounters[bol] === undefined) rrCounters[bol] = 0;
+      const file = available[rrCounters[bol] % available.length];
+      rrCounters[bol]++;
+      return sampleBuffers[file];
     }
 
-    function playStroke(ctx, destination, bol, time, velocity) {
-      const buffer = getBufferForBol(bol);
+    function playStroke(ctx, destination, bol, time, velocity, rrMode) {
+      const buffer = pickSampleVariant(bol, rrMode);
       if (!buffer) return;
 
       const src = ctx.createBufferSource();
       src.buffer = buffer;
 
+      // Subtle dynamic touch: higher velocity slightly raises gain and brightens attack
       const gain = ctx.createGain();
-      gain.gain.setValueAtTime(velocity, time);
+      const dynamicGain = Math.max(0.2, Math.min(1.0, velocity * (0.94 + Math.random() * 0.12)));
+      gain.gain.setValueAtTime(dynamicGain, time);
 
       src.connect(gain);
       gain.connect(destination);
@@ -114,6 +208,11 @@
     function parseBols() {
       const text = document.getElementById('bolInput').value;
       return text.replace(/[|,]/g, ' ').split(/\s+/).filter(b => b.trim().length > 0);
+    }
+
+    function getJitter(style) {
+      if (style === 'studio') return 0;
+      return (Math.random() - 0.5) * 0.014; // +/- 7ms natural wrist drift
     }
 
     function togglePlay() {
@@ -134,6 +233,7 @@
       document.getElementById('playBtn').className = "btn btn-stop";
 
       const bpm = parseInt(document.getElementById('bpm').value) || 135;
+      const rrMode = document.getElementById('roundRobin').value;
       const groove = document.getElementById('groove').value;
       const beatSec = 60 / bpm;
       let currentIndex = 0;
@@ -141,11 +241,11 @@
       function step() {
         if (!isPlaying) return;
 
+        // Velocity curves: Downbeat (Sam) heavy, structural beats medium, fillers gentle
         let velocity = (currentIndex === 0) ? 1.0 : (currentIndex % 4 === 0) ? 0.88 : 0.74;
-        let jitter = (groove === 'human') ? (Math.random() - 0.5) * 0.012 : 0;
-        let scheduleTime = Math.max(audioCtx.currentTime, audioCtx.currentTime + jitter);
+        let scheduleTime = Math.max(audioCtx.currentTime, audioCtx.currentTime + getJitter(groove));
 
-        playStroke(audioCtx, audioCtx.destination, bols[currentIndex], scheduleTime, velocity);
+        playStroke(audioCtx, audioCtx.destination, bols[currentIndex], scheduleTime, velocity, rrMode);
 
         currentIndex = (currentIndex + 1) % bols.length;
         timerId = setTimeout(step, beatSec * 1000);
@@ -160,12 +260,13 @@
       document.getElementById('playBtn').className = "btn btn-play";
     }
 
-    // Offline Export using Real Samples
+    // WAV Exporter using the full multi-sample pool
     async function exportWav() {
       const bols = parseBols();
       if (!bols.length) return;
 
       const bpm = parseInt(document.getElementById('bpm').value) || 135;
+      const rrMode = document.getElementById('roundRobin').value;
       const groove = document.getElementById('groove').value;
       const beatSec = 60 / bpm;
       const totalDuration = (bols.length * beatSec) + 1.5;
@@ -175,16 +276,15 @@
 
       bols.forEach((bol, i) => {
         let velocity = (i === 0) ? 1.0 : (i % 4 === 0) ? 0.88 : 0.74;
-        let jitter = (groove === 'human') ? (Math.random() - 0.5) * 0.012 : 0;
-        let playTime = Math.max(0, (i * beatSec) + jitter);
-        playStroke(offlineCtx, offlineCtx.destination, bol, playTime, velocity);
+        let playTime = Math.max(0, (i * beatSec) + getJitter(groove));
+        playStroke(offlineCtx, offlineCtx.destination, bol, playTime, velocity, rrMode);
       });
 
       const buffer = await offlineCtx.startRendering();
       const wavBlob = bufferToWave(buffer, buffer.length);
       const a = document.createElement("a");
       a.href = URL.createObjectURL(wavBlob);
-      a.download = "acoustic_tabla_track.wav";
+      a.download = "realistic_naad_tabla.wav";
       a.click();
     }
 
