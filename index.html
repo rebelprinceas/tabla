@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Naad Deep-Sampled Acoustic Tabla</title>
+  <title>Acoustic Tabla Studio</title>
   <style>
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background: #0b0f19; color: #f1f5f9; padding: 18px; max-width: 520px; margin: 0 auto; }
@@ -29,11 +29,11 @@
 </head>
 <body>
 
-  <h1>Naad Multi-Sample Tabla</h1>
-  <p class="sub">Round-Robin Layers &bull; Anti-Machinegun Realism &bull; WAV Export</p>
+  <h1>Acoustic Tabla Studio</h1>
+  <p class="sub">100+ Multi-Velocity Layers &bull; Round-Robin Anti-Machinegun</p>
 
   <div class="card">
-    <div id="status">Connecting to sample library...</div>
+    <div id="status">Loading acoustic strokes...</div>
     <div class="progress-bar"><div id="progress" class="progress-fill"></div></div>
 
     <label>Presets:</label>
@@ -43,7 +43,7 @@
       <span class="tag" onclick="setTaal('dadra')">Dadra (6)</span>
       <span class="tag" onclick="setTaal('rupak')">Rupak (7)</span>
       <span class="tag" onclick="setTaal('jhaptal')">Jhaptal (10)</span>
-      <span class="tag" onclick="setTaal('tirakit')">Tirakit Kaida</span>
+      <span class="tag" onclick="setTaal('tirakit')">Tirakit Drill</span>
     </div>
 
     <label for="bolInput">Taal / Bols:</label>
@@ -55,14 +55,14 @@
         <input type="number" id="bpm" value="135" min="40" max="320" />
       </div>
       <div style="flex: 1;">
-        <label for="roundRobin">Sample Alternation:</label>
-        <select id="roundRobin">
-          <option value="rr" selected>Round-Robin (Human)</option>
-          <option value="random">Random Variant</option>
+        <label for="tanpura">Tanpura Drone:</label>
+        <select id="tanpura">
+          <option value="none">Off</option>
+          <option value="sa_pa">Sa-Pa in G</option>
         </select>
       </div>
       <div style="flex: 1;">
-        <label for="groove">Micro-Timing:</label>
+        <label for="groove">Human Drift:</label>
         <select id="groove">
           <option value="studio">Strict Studio</option>
           <option value="live" selected>Live Baithak</option>
@@ -73,7 +73,7 @@
     <div class="controls">
       <button class="btn btn-play" id="playBtn" onclick="togglePlay()" disabled>Play</button>
     </div>
-    <button class="btn btn-export" id="exportBtn" onclick="exportWav()" disabled>Download Realistic WAV</button>
+    <button class="btn btn-export" id="exportBtn" onclick="exportWav()" disabled>Download Master WAV</button>
   </div>
 
   <script>
@@ -83,122 +83,140 @@
       dadra: "Dha Dhin Na | Dha Tin Na",
       rupak: "Tin Tin Na | Dhin Na | Dhin Na",
       jhaptal: "Dhin Na | Dhin Dhin Na | Tin Na | Dhin Dhin Na",
-      tirakit: "Dha Ti Ra Ki Ta | Ta Ka Ti Ra Ki Ta | Dha Dha Te Te | Ta Ka Ti Ra Ki Ta"
+      tirakit: "Dha Ti Ra Ki Ta Ta Ka Ti Ra Ki Ta | Dha Dha Te Te Ta Ka Ti Ra Ki Ta"
     };
 
     function setTaal(key) {
       document.getElementById('bolInput').value = taals[key];
     }
 
-    const BASE_URL = "https://raw.githubusercontent.com/oormicreations/naad/master/audio/";
-
-    // Palette mapping to multi-velocity & articulation files in Naad
-    const sampleManifest = [
-      "dha.wav", "dha1.wav", "dha2.wav",
-      "dhin.wav", "dhin1.wav", "dhin2.wav",
-      "ga.wav", "ga1.wav", "ga2.wav",
-      "na.wav", "na1.wav", "na2.wav",
-      "tin.wav", "tin1.wav",
-      "ka.wav", "ka1.wav",
-      "ti.wav", "te.wav", "re.wav", "ke.wav", "kat.wav",
-      "tun.wav", "dhet.wav", "tra.wav"
-    ];
-
-    // Groups mapped to variations for Round-Robin
-    const bolGroups = {
-      dha: ["dha.wav", "dha1.wav", "dha2.wav"],
-      dhin: ["dhin.wav", "dhin1.wav", "dhin2.wav"],
-      ga: ["ga.wav", "ga1.wav", "ga2.wav"],
-      ge: ["ga.wav", "ga1.wav", "ga2.wav"],
-      na: ["na.wav", "na1.wav", "na2.wav"],
-      ta: ["na.wav", "na1.wav", "na2.wav"],
-      tin: ["tin.wav", "tin1.wav"],
-      ka: ["ka.wav", "ka1.wav", "kat.wav"],
-      kat: ["kat.wav", "ka.wav"],
-      ke: ["ke.wav", "ka1.wav"],
-      ki: ["ke.wav", "ka.wav"],
-      ti: ["ti.wav"],
-      te: ["te.wav"],
-      re: ["re.wav"],
-      ra: ["re.wav"],
-      tun: ["tun.wav"],
-      dhet: ["dhet.wav"],
-      tra: ["tra.wav"]
+    // Exact catalog based on your verified audio files
+    const manifest = {
+      dha: Array.from({ length: 10 }, (_, i) => `Bol/Dha/Dha${String(i + 1).padStart(2, '0')}.wav`),
+      dhin: Array.from({ length: 10 }, (_, i) => `Bol/Dhin/Dhin${String(i + 1).padStart(2, '0')}.wav`),
+      dhit: Array.from({ length: 10 }, (_, i) => `Bol/Dhit/Dhit${String(i + 1).padStart(2, '0')}.wav`),
+      dhun: Array.from({ length: 10 }, (_, i) => `Bol/Dhun/Dhun${String(i + 1).padStart(2, '0')}.wav`),
+      ga: Array.from({ length: 11 }, (_, i) => `Bol/Ga/Ga${String(i + 1).padStart(2, '0')}.wav`),
+      ge: [1,2,3,4,5,6,7,8,9,10,12,13,14].map(n => `Bol/Ge/Ge${String(n).padStart(2, '0')}.wav`),
+      ke: Array.from({ length: 11 }, (_, i) => `Bol/Ke/Ke${String(i + 1).padStart(2, '0')}.wav`),
+      na: Array.from({ length: 11 }, (_, i) => `Bol/Na/Na${String(i + 1).padStart(2, '0')}.wav`),
+      ta: Array.from({ length: 10 }, (_, i) => `Bol/Ta/Ta${String(i + 1).padStart(2, '0')}.wav`),
+      ti: Array.from({ length: 10 }, (_, i) => `Bol/Ti/Ti${String(i + 1).padStart(2, '0')}.wav`),
+      tin: Array.from({ length: 10 }, (_, i) => `Bol/Tin/Tin${String(i + 1).padStart(2, '0')}.wav`),
+      tun: Array.from({ length: 10 }, (_, i) => `Bol/Tun/Tun${String(i + 1).padStart(2, '0')}.wav`),
+      acc_tanpura: ["Bol/Acc/Tanpura_SaPa_G.wav"],
+      acc_ghungru: Array.from({ length: 5 }, (_, i) => `Bol/Acc/Ghungru${String(i + 1).padStart(2, '0')}.wav`)
     };
 
-    const sampleBuffers = {};
-    const rrCounters = {};
+    // Maps common spelling variants to canonical sound categories
+    const aliasMap = {
+      dha: "dha",
+      dhin: "dhin",
+      dhit: "dhit",
+      dhun: "dhun",
+      ga: "ga",
+      ge: "ge",
+      ka: "ke",
+      ke: "ke",
+      kat: "ke",
+      ki: "ke",
+      na: "na",
+      ta: "ta",
+      ti: "ti",
+      te: "ti",
+      re: "ti",
+      ra: "ti",
+      tin: "tin",
+      tun: "tun"
+    };
+
+    const buffers = {};
+    const rrPointers = {};
     let audioCtx = null;
     let isPlaying = false;
     let timerId = null;
+    let tanpuraNode = null;
 
     function initAudio() {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 
-    // Preload and decode all multi-sample files
-    async function preloadNaadEngine() {
+    // Load, decode, and store all sound banks
+    async function loadSampleLibrary() {
       const statusEl = document.getElementById("status");
       const progressEl = document.getElementById("progress");
       initAudio();
 
+      const allFiles = Object.values(manifest).flat();
       let loaded = 0;
-      for (const file of sampleManifest) {
+
+      for (let i = 0; i < allFiles.length; i++) {
+        const path = allFiles[i];
         try {
-          const res = await fetch(BASE_URL + file);
+          const res = await fetch(path);
           if (res.ok) {
-            const arr = await res.arrayBuffer();
-            sampleBuffers[file] = await audioCtx.decodeAudioData(arr);
+            const ab = await res.arrayBuffer();
+            buffers[path] = await audioCtx.decodeAudioData(ab);
+            loaded++;
           }
-        } catch (e) {
-          // Fallback if specific variant doesn't exist on remote
+        } catch (err) {
+          // Pass silently if single file fails
         }
-        loaded++;
-        const pct = Math.round((loaded / sampleManifest.length) * 100);
+        const pct = Math.round(((i + 1) / allFiles.length) * 100);
         progressEl.style.width = pct + "%";
-        statusEl.innerText = `Loading acoustic variations: ${loaded}/${sampleManifest.length}`;
+        statusEl.innerText = `Loading acoustic samples (${loaded}/${allFiles.length})...`;
       }
 
-      statusEl.innerText = "✓ Multi-sample acoustic engine loaded";
-      statusEl.style.color = "#4ade80";
-      document.getElementById("playBtn").disabled = false;
-      document.getElementById("exportBtn").disabled = false;
+      if (loaded > 0) {
+        statusEl.innerText = `✓ Ready (${loaded} acoustic files mapped)`;
+        statusEl.style.color = "#4ade80";
+        document.getElementById("playBtn").disabled = false;
+        document.getElementById("exportBtn").disabled = false;
+      } else {
+        statusEl.innerText = "Error: Could not load files from ./Bol/ folder";
+        statusEl.style.color = "#f87171";
+      }
     }
 
-    window.addEventListener("DOMContentLoaded", preloadNaadEngine);
+    window.addEventListener("DOMContentLoaded", loadSampleLibrary);
 
-    // Round-Robin & Anti-Machine-Gun selector
-    function pickSampleVariant(bol, mode) {
+    // Dynamic selection using Velocity Layering + Round-Robin
+    function resolveBuffer(bol, velocityTier) {
       bol = bol.toLowerCase().replace(/[^a-z]/g, '');
-      const list = bolGroups[bol] || bolGroups[Object.keys(bolGroups).find(k => bol.startsWith(k))];
-      if (!list || !list.length) return null;
+      const cat = aliasMap[bol] || Object.keys(manifest).find(k => bol.startsWith(k));
+      const pool = manifest[cat];
+      if (!pool || !pool.length) return null;
 
-      const available = list.filter(f => sampleBuffers[f]);
-      if (!available.length) return sampleBuffers["dha.wav"] || null;
+      const available = pool.filter(p => buffers[p]);
+      if (!available.length) return null;
 
-      if (mode === "random") {
-        return sampleBuffers[available[Math.floor(Math.random() * available.length)]];
+      // Slice pool by velocity: Soft (lower index), Medium, Accent (higher index)
+      let tierSlice = available;
+      if (available.length >= 6) {
+        if (velocityTier === "soft") tierSlice = available.slice(0, Math.ceil(available.length * 0.4));
+        else if (velocityTier === "accent") tierSlice = available.slice(Math.floor(available.length * 0.6));
+        else tierSlice = available.slice(Math.floor(available.length * 0.3), Math.ceil(available.length * 0.7));
       }
 
-      // Round Robin cycle
-      if (rrCounters[bol] === undefined) rrCounters[bol] = 0;
-      const file = available[rrCounters[bol] % available.length];
-      rrCounters[bol]++;
-      return sampleBuffers[file];
+      if (!tierSlice.length) tierSlice = available;
+
+      // Round-robin selection inside the tier
+      if (rrPointers[cat] === undefined) rrPointers[cat] = 0;
+      const file = tierSlice[rrPointers[cat] % tierSlice.length];
+      rrPointers[cat]++;
+      return buffers[file];
     }
 
-    function playStroke(ctx, destination, bol, time, velocity, rrMode) {
-      const buffer = pickSampleVariant(bol, rrMode);
+    function playStroke(ctx, destination, bol, time, gainLevel, velocityTier) {
+      const buffer = resolveBuffer(bol, velocityTier);
       if (!buffer) return;
 
       const src = ctx.createBufferSource();
       src.buffer = buffer;
 
-      // Subtle dynamic touch: higher velocity slightly raises gain and brightens attack
       const gain = ctx.createGain();
-      const dynamicGain = Math.max(0.2, Math.min(1.0, velocity * (0.94 + Math.random() * 0.12)));
-      gain.gain.setValueAtTime(dynamicGain, time);
+      gain.gain.setValueAtTime(Math.min(1.0, gainLevel), time);
 
       src.connect(gain);
       gain.connect(destination);
@@ -212,7 +230,7 @@
 
     function getJitter(style) {
       if (style === 'studio') return 0;
-      return (Math.random() - 0.5) * 0.014; // +/- 7ms natural wrist drift
+      return (Math.random() - 0.5) * 0.012; // +/- 6ms human drift
     }
 
     function togglePlay() {
@@ -233,19 +251,39 @@
       document.getElementById('playBtn').className = "btn btn-stop";
 
       const bpm = parseInt(document.getElementById('bpm').value) || 135;
-      const rrMode = document.getElementById('roundRobin').value;
       const groove = document.getElementById('groove').value;
+      const tanpuraMode = document.getElementById('tanpura').value;
       const beatSec = 60 / bpm;
       let currentIndex = 0;
+
+      // Continuous Tanpura Drone layer
+      if (tanpuraMode === "sa_pa" && buffers["Bol/Acc/Tanpura_SaPa_G.wav"]) {
+        tanpuraNode = audioCtx.createBufferSource();
+        tanpuraNode.buffer = buffers["Bol/Acc/Tanpura_SaPa_G.wav"];
+        tanpuraNode.loop = true;
+        const tanGain = audioCtx.createGain();
+        tanGain.gain.value = 0.35;
+        tanpuraNode.connect(tanGain);
+        tanGain.connect(audioCtx.destination);
+        tanpuraNode.start(0);
+      }
 
       function step() {
         if (!isPlaying) return;
 
-        // Velocity curves: Downbeat (Sam) heavy, structural beats medium, fillers gentle
-        let velocity = (currentIndex === 0) ? 1.0 : (currentIndex % 4 === 0) ? 0.88 : 0.74;
-        let scheduleTime = Math.max(audioCtx.currentTime, audioCtx.currentTime + getJitter(groove));
+        // Dynamics: Sam is accent, structural quarters medium, subdivisions soft
+        let tier = "normal";
+        let gain = 0.8;
+        if (currentIndex === 0) {
+          tier = "accent";
+          gain = 1.0;
+        } else if (currentIndex % 4 !== 0) {
+          tier = "soft";
+          gain = 0.68;
+        }
 
-        playStroke(audioCtx, audioCtx.destination, bols[currentIndex], scheduleTime, velocity, rrMode);
+        const scheduleTime = Math.max(audioCtx.currentTime, audioCtx.currentTime + getJitter(groove));
+        playStroke(audioCtx, audioCtx.destination, bols[currentIndex], scheduleTime, gain, tier);
 
         currentIndex = (currentIndex + 1) % bols.length;
         timerId = setTimeout(step, beatSec * 1000);
@@ -256,35 +294,52 @@
     function stopPlay() {
       isPlaying = false;
       clearTimeout(timerId);
+      if (tanpuraNode) {
+        try { tanpuraNode.stop(); } catch (e) {}
+        tanpuraNode = null;
+      }
       document.getElementById('playBtn').innerText = "Play";
       document.getElementById('playBtn').className = "btn btn-play";
     }
 
-    // WAV Exporter using the full multi-sample pool
+    // Render uncompressed offline master WAV
     async function exportWav() {
       const bols = parseBols();
       if (!bols.length) return;
 
       const bpm = parseInt(document.getElementById('bpm').value) || 135;
-      const rrMode = document.getElementById('roundRobin').value;
       const groove = document.getElementById('groove').value;
+      const tanpuraMode = document.getElementById('tanpura').value;
       const beatSec = 60 / bpm;
       const totalDuration = (bols.length * beatSec) + 1.5;
       const sampleRate = 44100;
 
       const offlineCtx = new OfflineAudioContext(2, Math.ceil(sampleRate * totalDuration), sampleRate);
 
+      // Mix Tanpura into WAV export if enabled
+      if (tanpuraMode === "sa_pa" && buffers["Bol/Acc/Tanpura_SaPa_G.wav"]) {
+        const drone = offlineCtx.createBufferSource();
+        drone.buffer = buffers["Bol/Acc/Tanpura_SaPa_G.wav"];
+        drone.loop = true;
+        const g = offlineCtx.createGain();
+        g.gain.value = 0.35;
+        drone.connect(g);
+        g.connect(offlineCtx.destination);
+        drone.start(0);
+      }
+
       bols.forEach((bol, i) => {
-        let velocity = (i === 0) ? 1.0 : (i % 4 === 0) ? 0.88 : 0.74;
+        let tier = (i === 0) ? "accent" : (i % 4 !== 0) ? "soft" : "normal";
+        let gain = (i === 0) ? 1.0 : (i % 4 !== 0) ? 0.68 : 0.8;
         let playTime = Math.max(0, (i * beatSec) + getJitter(groove));
-        playStroke(offlineCtx, offlineCtx.destination, bol, playTime, velocity, rrMode);
+        playStroke(offlineCtx, offlineCtx.destination, bol, playTime, gain, tier);
       });
 
       const buffer = await offlineCtx.startRendering();
       const wavBlob = bufferToWave(buffer, buffer.length);
       const a = document.createElement("a");
       a.href = URL.createObjectURL(wavBlob);
-      a.download = "realistic_naad_tabla.wav";
+      a.download = "master_tabla_track.wav";
       a.click();
     }
 
