@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Acoustic Tabla Engine</title>
+  <style>
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: #0b0f19; color: #f1f5f9; padding: 18px; max-width: 500px; margin: 0 auto; }
+    h1 { font-size: 1.3rem; text-align: center; margin-bottom: 4px; font-weight: 700; color: #f8fafc; }
+    p.sub { font-size: 0.8rem; color: #94a3b8; text-align: center; margin-bottom: 18px; }
+    .card { background: #131d31; border-radius: 14px; padding: 18px; border: 1px solid #1e293b; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+    label { font-size: 0.8rem; color: #94a3b8; font-weight: 600; display: block; margin-top: 10px; }
+    textarea, select, input { width: 100%; padding: 10px 12px; background: #0b0f19; color: #f8fafc; border: 1px solid #334155; border-radius: 8px; font-size: 0.9rem; margin-top: 5px; }
+    textarea { height: 80px; resize: vertical; }
+    .row { display: flex; gap: 8px; margin-top: 4px; }
+    .controls { display: flex; gap: 8px; margin-top: 14px; }
+    .btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; font-size: 0.95rem; cursor: pointer; text-align: center; }
+    .btn-play { background: #3b82f6; color: white; }
+    .btn-stop { background: #ef4444; color: white; }
+    .btn-export { background: #10b981; color: white; margin-top: 10px; width: 100%; }
+    .quick-taals { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; margin-bottom: 4px; }
+    .tag { background: #1e293b; font-size: 0.75rem; padding: 5px 9px; border-radius: 16px; cursor: pointer; color: #60a5fa; border: 1px solid #334155; }
+  </style>
+</head>
+<body>
+
+  <h1>Natural Acoustic Tabla</h1>
+  <p class="sub">Humanized Dynamics &bull; Wood & Skin Modeling &bull; WAV Export</p>
+
+  <div class="card">
+    <label>Presets:</label>
+    <div class="quick-taals">
+      <span class="tag" onclick="setTaal('teentaal')">Teentaal (16)</span>
+      <span class="tag" onclick="setTaal('keherwa')">Keherwa (8)</span>
+      <span class="tag" onclick="setTaal('dadra')">Dadra (6)</span>
+      <span class="tag" onclick="setTaal('rupak')">Rupak (7)</span>
+      <span class="tag" onclick="setTaal('jhaptal')">Jhaptal (10)</span>
+      <span class="tag" onclick="setTaal('tirakit')">Tirakit Drill</span>
+    </div>
+
+    <label for="bolInput">Taal / Bols:</label>
+    <textarea id="bolInput">Dha Dhin Dhin Dha | Dha Dhin Dhin Dha | Dha Tin Tin Ta | Ta Dhin Dhin Dha</textarea>
+
+    <div class="row">
+      <div style="flex: 1;">
+        <label for="bpm">BPM (Speed):</label>
+        <input type="number" id="bpm" value="135" min="40" max="320" />
+      </div>
+      <div style="flex: 1;">
+        <label for="pitch">Scale (Root Hz):</label>
+        <select id="pitch">
+          <option value="261.63">C (261 Hz)</option>
+          <option value="277.18">C# (277 Hz)</option>
+          <option value="293.66" selected>D (294 Hz)</option>
+          <option value="311.13">D# (311 Hz)</option>
+          <option value="329.63">E (330 Hz)</option>
+        </select>
+      </div>
+      <div style="flex: 1;">
+        <label for="humanize">Humanize:</label>
+        <select id="humanize">
+          <option value="subtle">Subtle</option>
+          <option value="live" selected>Live Player</option>
+          <option value="loose">Loose Groove</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-play" id="playBtn" onclick="togglePlay()">Play</button>
+    </div>
+    <button class="btn btn-export" onclick="exportWav()">Download Natural WAV</button>
+  </div>
+
+  <script>
+    const taals = {
+      teentaal: "Dha Dhin Dhin Dha | Dha Dhin Dhin Dha | Dha Tin Tin Ta | Ta Dhin Dhin Dha",
+      keherwa: "Dha Ge Na Ti | Na Ka Dhin Na",
+      dadra: "Dha Dhin Na | Dha Tin Na",
+      rupak: "Tin Tin Na | Dhin Na | Dhin Na",
+      jhaptal: "Dhin Na | Dhin Dhin Na | Tin Na | Dhin Dhin Na",
+      tirakit: "Dha Ti Ra Ki Ta Ta Ka Ti Ra Ki Ta"
+    };
+
+    function setTaal(key) {
+      document.getElementById('bolInput').value = taals[key];
+    }
+
+    let audioCtx = null;
+    let isPlaying = false;
+    let timerId = null;
+
+    function initContext() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    // --- REVERB CONVOLVER (Acoustic Room Simulation) ---
+    function createReverb(ctx) {
+      const rate = ctx.sampleRate;
+      const length = rate * 0.8;
+      const decay = 2.5;
+      const impulse = ctx.createBuffer(2, length, rate);
+      const left = impulse.getChannelData(0);
+      const right = impulse.getChannelData(1);
+
+      for (let i = 0; i < length; i++) {
+        const n = i / length;
+        const e = Math.exp(-n * decay);
+        left[i] = (Math.random() * 2 - 1) * e;
+        right[i] = (Math.random() * 2 - 1) * e;
+      }
+      const convolver = ctx.createConvolver();
+      convolver.buffer = impulse;
+      return convolver;
+    }
+
+    // --- PHYSICAL ENGINE: STROKE GENERATION ---
+    function playAcousticStroke(ctx, targetNode, bol, time, baseFreq, velocity) {
+      bol = bol.toLowerCase().replace(/[^a-z]/g, '');
+      if (!bol) return;
+
+      const master = ctx.createGain();
+      // Add subtle dynamic velocity randomization (natural hand force)
+      const dynamicGain = Math.max(0.2, Math.min(1.0, velocity * (0.92 + Math.random() * 0.16)));
+      master.gain.setValueAtTime(dynamicGain, time);
+      master.connect(targetNode);
+
+      // 1. DAYAN (RIGHT DRUM) PHYSICAL SYNTH
+      function triggerDayan(f0, ringTime, isMetallic, strikeForce) {
+        // Fundamental & Overtones matching Syahi loading
+        const partials = isMetallic ? [1.0, 2.008, 3.012, 4.02] : [1.0, 1.48, 2.15];
+        const weights = isMetallic ? [0.65, 0.45, 0.18, 0.08] : [0.8, 0.25, 0.1];
+
+        partials.forEach((mult, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          const pFreq = f0 * mult * (1 + (Math.random() - 0.5) * 0.005); // Skin tension micro-deviation
+
+          osc.frequency.setValueAtTime(pFreq * 1.02, time);
+          osc.frequency.exponentialRampToValueAtTime(pFreq, time + 0.025); // Membrane strike settling
+
+          const decay = ringTime * (1 - idx * 0.2);
+          gain.gain.setValueAtTime(weights[idx] * strikeForce, time);
+          gain.gain.exponentialRampToValueAtTime(0.0001, time + decay);
+
+          osc.connect(gain);
+          gain.connect(master);
+          osc.start(time);
+          osc.stop(time + decay);
+        });
+
+        // Transient finger crack (attack thump)
+        const hit = ctx.createOscillator();
+        const hitGain = ctx.createGain();
+        hit.frequency.setValueAtTime(800, time);
+        hit.frequency.exponentialRampToValueAtTime(60, time + 0.015);
+        hitGain.gain.setValueAtTime(0.35 * strikeForce, time);
+        hitGain.gain.exponentialRampToValueAtTime(0.0001, time + 0.015);
+        hit.connect(hitGain);
+        hitGain.connect(master);
+        hit.start(time);
+        hit.stop(time + 0.015);
+      }
+
+      // 2. BAYAN (LEFT BASS DRUM) PHYSICAL SYNTH
+      function triggerBayan(f0, bendAmount, decayTime) {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        
+        // Realistic Meend / Heel curve: Down, slight press, release
+        const startFreq = f0 + (bendAmount * (0.85 + Math.random() * 0.3));
+        osc.frequency.setValueAtTime(startFreq, time);
+        osc.frequency.exponentialRampToValueAtTime(f0 * 1.15, time + decayTime * 0.25);
+        osc.frequency.exponentialRampToValueAtTime(f0, time + decayTime * 0.7);
+
+        gain.gain.setValueAtTime(0.9, time);
+        gain.gain.exponentialRampToValueAtTime(0.0001, time + decayTime);
+
+        // Lowpass filter to simulate deep clay/metal cavity
+        const lpf = ctx.createBiquadFilter();
+        lpf.type = "lowpass";
+        lpf.frequency.setValueAtTime(280, time);
+
+        osc.connect(gain);
+        gain.connect(lpf);
+        lpf.connect(master);
+        osc.start(time);
+        osc.stop(time + decayTime);
+      }
+
+      // 3. CLOSED SLAPS & TAPS (Ka, Kat, Ki)
+      function triggerMutedSkin(duration) {
+        const bufLen = Math.floor(ctx.sampleRate * duration);
+        const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+        const d = buf.getChannelData(0);
+        for (let i = 0; i < bufLen; i++) d[i] = Math.random() * 2 - 1;
+
+        const noise = ctx.createBufferSource();
+        noise.buffer = buf;
+
+        // Bandpass to sound like leather slap rather than white noise
+        const bpf = ctx.createBiquadFilter();
+        bpf.type = "bandpass";
+        bpf.frequency.value = 450;
+        bpf.Q.value = 1.8;
+
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.85, time);
+        g.gain.exponentialRampToValueAtTime(0.001, time + duration);
+
+        noise.connect(bpf);
+        bpf.connect(g);
+        g.connect(master);
+        noise.start(time);
+      }
+
+      // Stroke mappings
+      switch (bol) {
+        case 'dha':
+          triggerDayan(baseFreq, 0.42, true, 1.0);
+          triggerBayan(78, 48, 0.52);
+          break;
+        case 'dhin':
+          triggerDayan(baseFreq * 0.95, 0.48, false, 0.85);
+          triggerBayan(84, 32, 0.48);
+          break;
+        case 'ge':
+        case 'ga':
+          triggerBayan(80, 52, 0.55);
+          break;
+        case 'na':
+        case 'ta':
+          triggerDayan(baseFreq, 0.38, true, 0.95);
+          break;
+        case 'tin':
+          triggerDayan(baseFreq * 0.9, 0.35, false, 0.7);
+          break;
+        case 'tun':
+          triggerDayan(baseFreq * 0.85, 0.65, false, 1.0); // Full resonant open stroke
+          break;
+        case 'ka':
+        case 'ke':
+        case 'kat':
+          triggerMutedSkin(0.08);
+          triggerBayan(65, 0, 0.09);
+          break;
+        case 'ti':
+        case 'te':
+        case 're':
+        case 'ra':
+        case 'ki':
+          triggerDayan(baseFreq * 1.12, 0.12, false, 0.55);
+          break;
+        default:
+          break;
+      }
+    }
+
+    // --- SEQUENCER & HUMAN GROOVE TIMING ---
+    function parseBols() {
+      const text = document.getElementById('bolInput').value;
+      return text.replace(/[|,]/g, ' ').split(/\s+/).filter(b => b.trim().length > 0);
+    }
+
+    function getHumanOffset(style) {
+      if (style === "subtle") return (Math.random() - 0.5) * 0.005; // +/- 2.5ms
+      if (style === "live") return (Math.random() - 0.5) * 0.014;   // +/- 7ms
+      return (Math.random() - 0.5) * 0.024;                         // +/- 12ms (loose)
+    }
+
+    function togglePlay() {
+      initContext();
+      if (isPlaying) {
+        stopSequencer();
+      } else {
+        startSequencer();
+      }
+    }
+
+    let globalReverb = null;
+
+    function startSequencer() {
+      const bols = parseBols();
+      if (!bols.length) return;
+
+      isPlaying = true;
+      document.getElementById('playBtn').innerText = "Stop";
+      document.getElementById('playBtn').className = "btn btn-stop";
+
+      const bpm = parseInt(document.getElementById('bpm').value) || 135;
+      const baseFreq = parseFloat(document.getElementById('pitch').value) || 293.66;
+      const humanStyle = document.getElementById('humanize').value;
+      const beatSec = 60 / bpm;
+      let currentIndex = 0;
+
+      // Master output pipeline with warm room acoustics
+      const roomReverb = createReverb(audioCtx);
+      const wetGain = audioCtx.createGain();
+      wetGain.gain.value = 0.18; // 18% ambient room decay
+      roomReverb.connect(wetGain);
+      wetGain.connect(audioCtx.destination);
+
+      const dryGain = audioCtx.createGain();
+      dryGain.connect(audioCtx.destination);
+
+      const trackNode = audioCtx.createGain();
+      trackNode.connect(dryGain);
+      trackNode.connect(roomReverb);
+
+      function step() {
+        if (!isPlaying) return;
+
+        // Dynamics: Emphasize beat 0 (Sam) and alternate strong/weak pulses
+        let velocity = (currentIndex === 0) ? 1.0 : (currentIndex % 4 === 0) ? 0.85 : 0.72;
+        const timingJitter = getHumanOffset(humanStyle);
+        const scheduledTime = Math.max(audioCtx.currentTime, audioCtx.currentTime + timingJitter);
+
+        playAcousticStroke(audioCtx, trackNode, bols[currentIndex], scheduledTime, baseFreq, velocity);
+
+        currentIndex++;
+        if (currentIndex >= bols.length) {
+          currentIndex = 0;
+        }
+
+        timerId = setTimeout(step, beatSec * 1000);
+      }
+      step();
+    }
+
+    function stopSequencer() {
+      isPlaying = false;
+      clearTimeout(timerId);
+      document.getElementById('playBtn').innerText = "Play";
+      document.getElementById('playBtn').className = "btn btn-play";
+    }
+
+    // --- NATURAL WAV EXPORTER ---
+    async function exportWav() {
+      const bols = parseBols();
+      if (!bols.length) return;
+
+      const bpm = parseInt(document.getElementById('bpm').value) || 135;
+      const baseFreq = parseFloat(document.getElementById('pitch').value) || 293.66;
+      const humanStyle = document.getElementById('humanize').value;
+      const beatSec = 60 / bpm;
+      const totalDuration = (bols.length * beatSec) + 1.2;
+      const sampleRate = 44100;
+
+      const offlineCtx = new OfflineAudioContext(2, sampleRate * totalDuration, sampleRate);
+
+      // Reverb simulation offline
+      const reverb = createReverb(offlineCtx);
+      const wet = offlineCtx.createGain();
+      wet.gain.value = 0.18;
+      reverb.connect(wet);
+      wet.connect(offlineCtx.destination);
+
+      const dry = offlineCtx.createGain();
+      dry.connect(offlineCtx.destination);
+
+      const mix = offlineCtx.createGain();
+      mix.connect(dry);
+      mix.connect(reverb);
+
+      bols.forEach((bol, i) => {
+        let velocity = (i === 0) ? 1.0 : (i % 4 === 0) ? 0.85 : 0.72;
+        const jitter = getHumanOffset(humanStyle);
+        const playTime = Math.max(0, (i * beatSec) + jitter);
+        playAcousticStroke(offlineCtx, mix, bol, playTime, baseFreq, velocity);
+      });
+
+      const buffer = await offlineCtx.startRendering();
+      const wavBlob = bufferToWave(buffer, buffer.length);
+
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(wavBlob);
+      a.download = "natural_tabla.wav";
+      a.click();
+    }
+
+    function bufferToWave(abuffer, len) {
+      const numOfChan = abuffer.numberOfChannels;
+      const length = len * numOfChan * 2 + 44;
+      const out = new DataView(new ArrayBuffer(length));
+      const channels = [];
+      let sample = 0;
+      let offset = 0;
+      let pos = 0;
+
+      function setUint16(data) { out.setUint16(pos, data, true); pos += 2; }
+      function setUint32(data) { out.setUint32(pos, data, true); pos += 4; }
+
+      setUint32(0x46464952); setUint32(length - 8); setUint32(0x45564157);
+      setUint32(0x20746d66); setUint32(16); setUint16(1);
+      setUint16(numOfChan);
+      setUint32(abuffer.sampleRate);
+      setUint32(abuffer.sampleRate * 2 * numOfChan);
+      setUint16(numOfChan * 2);
+      setUint16(16);
+      setUint32(0x61746164); setUint32(length - pos - 4);
+
+      for (let i = 0; i < numOfChan; i++) channels.push(abuffer.getChannelData(i));
+
+      while (pos < length) {
+        for (let i = 0; i < numOfChan; i++) {
+          sample = Math.max(-1, Math.min(1, channels[i][offset]));
+          sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767) | 0;
+          out.setInt16(pos, sample, true);
+          pos += 2;
+        }
+        offset++;
+      }
+      return new Blob([out], { type: "audio/wav" });
+    }
+  </script>
+</body>
+</html>
