@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Veer & Raudra Tabla Engine</title>
+  <title>War Drum & Dhol Tabla Studio</title>
   <style>
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background: #07090e; color: #f1f5f9; padding: 18px; max-width: 520px; margin: 0 auto; }
@@ -29,40 +29,39 @@
 </head>
 <body>
 
-  <h1>Raudra & Veer Tabla</h1>
-  <p class="sub">Aggressive Transient Punch &bull; Fast Rolls &bull; Rashmirathi Meter</p>
+  <h1>War Drum & Dhol Tabla</h1>
+  <p class="sub">Heavy Bass Boom &bull; Stick Slams &bull; Instant Kill Switch</p>
 
   <div class="card">
-    <div id="status">Loading acoustic strokes...</div>
+    <div id="status">Loading acoustic sound bank...</div>
     <div class="progress-bar"><div id="progress" class="progress-fill"></div></div>
 
-    <label>High-Energy Presets (Tap to load):</label>
+    <label>Battlefield Presets (No Light Taps):</label>
     <div class="quick-taals">
-      <span class="tag" onclick="setPreset('rashmirathi')">Rashmirathi Battle (Drut)</span>
-      <span class="tag" onclick="setPreset('tandav')">Raudra Tandav (Heavy)</span>
-      <span class="tag" onclick="setPreset('veer_march')">Veer Senani March</span>
-      <span class="tag" onclick="setPreset('drut_teen')">Fast Teentaal (Drut)</span>
-      <span class="tag" onclick="setPreset('kaida_storm')">Tirakit Storm Roll</span>
+      <span class="tag" onclick="setPreset('rashmirathi_dhol')">Rashmirathi War Dhol</span>
+      <span class="tag" onclick="setPreset('tandav_nagada')">Tandav Heavy Nagada</span>
+      <span class="tag" onclick="setPreset('kalinga_march')">Martial March (Dhum-Kat)</span>
+      <span class="tag" onclick="setPreset('veer_gallop')">Ashwa-Gati (Gallop)</span>
     </div>
 
-    <label for="bolInput">Bols (Use hyphens for fast rolls: Ti-Re-Ki-Ta):</label>
-    <textarea id="bolInput">Dha Dhit Dhit Dha | Ti-Re-Ki-Ta Dha Kat Ta | Dha Dhit Dhit Dha | Ti-Re-Ki-Ta Dhun Tun Dha</textarea>
+    <label for="bolInput">Drum Pattern:</label>
+    <textarea id="bolInput">Dha Kat Dhun Dha | Dha Kat Dhun Dha | Dhun Dhun Kat Ta | Dha Kat Dha Dha</textarea>
 
     <div class="row">
       <div style="flex: 1;">
-        <label for="bpm">BPM (Tempo):</label>
-        <input type="number" id="bpm" value="180" min="60" max="320" />
+        <label for="bpm">BPM (Speed):</label>
+        <input type="number" id="bpm" value="175" min="60" max="320" />
       </div>
       <div style="flex: 1;">
-        <label for="punch">Transient Punch:</label>
-        <select id="punch">
-          <option value="brutal" selected>Raudra (Hard Punch)</option>
-          <option value="heavy">Veer (Heavy Drum)</option>
-          <option value="natural">Natural Dynamic</option>
+        <label for="boost">Bass/Thump Boost:</label>
+        <select id="boost">
+          <option value="dhol" selected>Heavy Dhol (Sub-Bass)</option>
+          <option value="punch">Hard Transient (Nagada)</option>
+          <option value="flat">Standard</option>
         </select>
       </div>
       <div style="flex: 1;">
-        <label for="tanpura">Tanpura Drone:</label>
+        <label for="tanpura">Drone:</label>
         <select id="tanpura">
           <option value="none">Mute</option>
           <option value="sa_pa" selected>Sa-Pa in G</option>
@@ -73,31 +72,27 @@
     <div class="controls">
       <button class="btn btn-play" id="playBtn" onclick="togglePlay()" disabled>Play</button>
     </div>
-    <button class="btn btn-export" id="exportBtn" onclick="exportWav()" disabled>Export Aggressive WAV</button>
+    <button class="btn btn-export" id="exportBtn" onclick="exportWav()" disabled>Export Dhol WAV</button>
   </div>
 
   <script>
-    // Battle and high-tension poetic meters
+    // Presets built strictly with heavy hits, open bass, and stick slaps
     const presets = {
-      rashmirathi: {
-        text: "Dha Dhit Dhit Dha | Ti-Re-Ki-Ta Dha Kat Ta | Dha Dhit Dhit Dha | Ti-Re-Ki-Ta Dhun Tun Dha",
-        bpm: 185
+      rashmirathi_dhol: {
+        text: "Dha Kat Dhun Dha | Dha Kat Dhun Dha | Dhun Dhun Kat Ta | Dha Kat Dha Dha",
+        bpm: 180
       },
-      tandav: {
-        text: "Dha Dhun Dhit Kat | Dha-Dha Te-Te Ta-Ka Ti-Re-Ki-Ta | Dha Dhun Dhit Kat | Tun Tun Dhun Dha",
+      tandav_nagada: {
+        text: "Dha Dhun Kat Dha | Dhun Dhun Kat Ta | Dha Kat Dhun Kat | Dha Dha Dhun Dha",
         bpm: 170
       },
-      veer_march: {
-        text: "Dha Kat Dha Kat | Ti-Re-Ki-Ta Dha Dha Kat | Dha Kat Dha Kat | Ti-Re-Ki-Ta Dhun Dhun Dha",
-        bpm: 195
+      kalinga_march: {
+        text: "Dhit Kat Dha Kat | Dhun Kat Dha Dha | Dhit Kat Dha Kat | Dhun Dhun Dha Dha",
+        bpm: 185
       },
-      drut_teen: {
-        text: "Dha Dhin Dhin Dha | Dha Dhin Dhin Dha | Dha Tin Tin Ta | Ta Dhin Dhin Dha",
-        bpm: 210
-      },
-      kaida_storm: {
-        text: "Dha-Te-Te Dha-Te-Te Dha Dha Te-Te | Ta-Ka Ti-Re-Ki-Ta Dha Dha Te-Te | Ta-Te-Te Ta-Te-Te Ta Ta Te-Te | Ta-Ka Ti-Re-Ki-Ta Dha Dha Te-Te",
-        bpm: 190
+      veer_gallop: {
+        text: "Dha Kat-Ta Dha Kat-Ta | Dhun Kat-Ta Dha Dha | Dha Kat-Ta Dha Kat-Ta | Dhun Dhun Dha Dha",
+        bpm: 175
       }
     };
 
@@ -116,18 +111,15 @@
       ke: Array.from({ length: 11 }, (_, i) => `Bol/Ke/Ke${String(i + 1).padStart(2, '0')}.wav`),
       na: Array.from({ length: 11 }, (_, i) => `Bol/Na/Na${String(i + 1).padStart(2, '0')}.wav`),
       ta: Array.from({ length: 10 }, (_, i) => `Bol/Ta/Ta${String(i + 1).padStart(2, '0')}.wav`),
-      ti: Array.from({ length: 10 }, (_, i) => `Bol/Ti/Ti${String(i + 1).padStart(2, '0')}.wav`),
       tin: Array.from({ length: 10 }, (_, i) => `Bol/Tin/Tin${String(i + 1).padStart(2, '0')}.wav`),
       tun: Array.from({ length: 10 }, (_, i) => `Bol/Tun/Tun${String(i + 1).padStart(2, '0')}.wav`),
-      acc_tanpura: ["Bol/Acc/Tanpura_SaPa_G.wav"],
-      acc_ghungru: Array.from({ length: 5 }, (_, i) => `Bol/Acc/Ghungru${String(i + 1).padStart(2, '0')}.wav`)
+      acc_tanpura: ["Bol/Acc/Tanpura_SaPa_G.wav"]
     };
 
     const aliasMap = {
       dha: "dha", dhin: "dhin", dhit: "dhit", dhun: "dhun",
       ga: "ga", ge: "ge", ka: "ke", ke: "ke", kat: "ke", ki: "ke",
-      na: "na", ta: "ta", ti: "ti", te: "ti", re: "ti", ra: "ti",
-      tin: "tin", tun: "tun"
+      na: "na", ta: "ta", tin: "tin", tun: "tun"
     };
 
     const buffers = {};
@@ -136,36 +128,43 @@
     let isPlaying = false;
     let timerId = null;
     let tanpuraNode = null;
-    let masterCompressor = null;
+    let activeSources = []; // Tracks playing audio nodes for instantaneous stop
 
     function initAudio() {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 
-    // Heavy studio punch chain (Compressor for sharp attack & bass weight)
+    // Heavy EQ + Compression to get the booming "Dhol/Nagada" thump
     function setupAudioChain(ctx) {
-      const comp = ctx.createDynamicsCompressor();
-      const punchMode = document.getElementById("punch") ? document.getElementById("punch").value : "brutal";
+      const bassBoost = ctx.createBiquadFilter();
+      bassBoost.type = "lowshelf";
+      bassBoost.frequency.value = 140;
 
-      if (punchMode === "brutal") {
-        comp.threshold.setValueAtTime(-18, ctx.currentTime);
-        comp.knee.setValueAtTime(4, ctx.currentTime);
-        comp.ratio.setValueAtTime(8, ctx.currentTime);
-        comp.attack.setValueAtTime(0.003, ctx.currentTime); // Fast punch
-        comp.release.setValueAtTime(0.08, ctx.currentTime);
-      } else if (punchMode === "heavy") {
-        comp.threshold.setValueAtTime(-14, ctx.currentTime);
-        comp.ratio.setValueAtTime(5, ctx.currentTime);
+      const comp = ctx.createDynamicsCompressor();
+      const mode = document.getElementById("boost") ? document.getElementById("boost").value : "dhol";
+
+      if (mode === "dhol") {
+        bassBoost.gain.value = 7.5; // Deep chest punch
+        comp.threshold.setValueAtTime(-16, ctx.currentTime);
+        comp.ratio.setValueAtTime(6, ctx.currentTime);
         comp.attack.setValueAtTime(0.005, ctx.currentTime);
-        comp.release.setValueAtTime(0.12, ctx.currentTime);
+        comp.release.setValueAtTime(0.09, ctx.currentTime);
+      } else if (mode === "punch") {
+        bassBoost.gain.value = 3.5;
+        comp.threshold.setValueAtTime(-20, ctx.currentTime);
+        comp.ratio.setValueAtTime(9, ctx.currentTime);
+        comp.attack.setValueAtTime(0.002, ctx.currentTime);
+        comp.release.setValueAtTime(0.06, ctx.currentTime);
       } else {
+        bassBoost.gain.value = 0;
         comp.threshold.setValueAtTime(-8, ctx.currentTime);
         comp.ratio.setValueAtTime(2.5, ctx.currentTime);
       }
 
+      bassBoost.connect(comp);
       comp.connect(ctx.destination);
-      return comp;
+      return bassBoost;
     }
 
     async function loadSampleLibrary() {
@@ -188,11 +187,11 @@
         } catch (err) {}
         const pct = Math.round(((i + 1) / allFiles.length) * 100);
         progressEl.style.width = pct + "%";
-        statusEl.innerText = `Loading acoustic strokes: ${loaded}/${allFiles.length}`;
+        statusEl.innerText = `Loading acoustic drum strokes: ${loaded}/${allFiles.length}`;
       }
 
       if (loaded > 0) {
-        statusEl.innerText = `✓ Raudra Engine Armed (${loaded} strokes mapped)`;
+        statusEl.innerText = `✓ Dhol Engine Armed (${loaded} strokes mapped)`;
         statusEl.style.color = "#fb7185";
         document.getElementById("playBtn").disabled = false;
         document.getElementById("exportBtn").disabled = false;
@@ -204,8 +203,7 @@
 
     window.addEventListener("DOMContentLoaded", loadSampleLibrary);
 
-    // Forces selection of high-energy, louder hit files (07 to 11 range)
-    function resolveBuffer(bol, isAccent) {
+    function resolveBuffer(bol) {
       bol = bol.toLowerCase().replace(/[^a-z]/g, '');
       const cat = aliasMap[bol] || Object.keys(manifest).find(k => bol.startsWith(k));
       const pool = manifest[cat];
@@ -214,26 +212,17 @@
       const available = pool.filter(p => buffers[p]);
       if (!available.length) return null;
 
-      // Aggressive tier: Biased toward loud and aggressive recordings
-      let tierSlice = available;
-      if (available.length >= 6) {
-        if (isAccent) {
-          tierSlice = available.slice(Math.floor(available.length * 0.5)); // Heavy accented samples
-        } else {
-          tierSlice = available.slice(Math.floor(available.length * 0.25)); // Skip weak ghost hits
-        }
-      }
-
-      if (!tierSlice.length) tierSlice = available;
+      // Select from the harder, louder hit recordings
+      const heavySamples = (available.length >= 6) ? available.slice(Math.floor(available.length * 0.4)) : available;
 
       if (rrPointers[cat] === undefined) rrPointers[cat] = 0;
-      const file = tierSlice[rrPointers[cat] % tierSlice.length];
+      const file = heavySamples[rrPointers[cat] % heavySamples.length];
       rrPointers[cat]++;
       return buffers[file];
     }
 
-    function playStroke(ctx, destination, bol, time, gainLevel, isAccent) {
-      const buffer = resolveBuffer(bol, isAccent);
+    function playStroke(ctx, destination, bol, time, gainLevel) {
+      const buffer = resolveBuffer(bol);
       if (!buffer) return;
 
       const src = ctx.createBufferSource();
@@ -245,9 +234,14 @@
       src.connect(gain);
       gain.connect(destination);
       src.start(time);
+
+      activeSources.push(src);
+      src.onended = () => {
+        const idx = activeSources.indexOf(src);
+        if (idx !== -1) activeSources.splice(idx, 1);
+      };
     }
 
-    // Tokenizer supporting both full beats and sub-divided rapid rolls (e.g. Ti-Re-Ki-Ta)
     function parseEvents(bpm) {
       const text = document.getElementById('bolInput').value;
       const tokens = text.replace(/[|,]/g, ' ').split(/\s+/).filter(b => b.trim().length > 0);
@@ -258,24 +252,20 @@
       tokens.forEach((tok, tokIdx) => {
         const isSam = (tokIdx === 0);
         if (tok.includes('-')) {
-          // Rapid roll subdivision (splits beat evenly)
           const subs = tok.split('-').filter(s => s.trim().length > 0);
           const subDuration = beatSec / subs.length;
           subs.forEach((subBol, sIdx) => {
             events.push({
               bol: subBol,
               offset: cursor + (sIdx * subDuration),
-              gain: (sIdx === 0) ? 0.95 : 0.85,
-              accent: (sIdx === 0 && isSam)
+              gain: (sIdx === 0) ? 1.05 : 0.95
             });
           });
         } else {
-          // Standard full beat
           events.push({
             bol: tok,
             offset: cursor,
-            gain: isSam ? 1.15 : 0.95,
-            accent: isSam || (tokIdx % 4 === 0)
+            gain: isSam ? 1.25 : 1.0
           });
         }
         cursor += beatSec;
@@ -294,7 +284,7 @@
     }
 
     function startPlay() {
-      const bpm = parseInt(document.getElementById('bpm').value) || 180;
+      const bpm = parseInt(document.getElementById('bpm').value) || 175;
       const parsed = parseEvents(bpm);
       if (!parsed.events.length) return;
 
@@ -302,25 +292,25 @@
       document.getElementById('playBtn').innerText = "Stop";
       document.getElementById('playBtn').className = "btn btn-stop";
 
-      masterCompressor = setupAudioChain(audioCtx);
+      const chainInlet = setupAudioChain(audioCtx);
 
-      // Drone
       if (document.getElementById('tanpura').value === "sa_pa" && buffers["Bol/Acc/Tanpura_SaPa_G.wav"]) {
         tanpuraNode = audioCtx.createBufferSource();
         tanpuraNode.buffer = buffers["Bol/Acc/Tanpura_SaPa_G.wav"];
         tanpuraNode.loop = true;
         const tanGain = audioCtx.createGain();
-        tanGain.gain.value = 0.28;
+        tanGain.gain.value = 0.25;
         tanpuraNode.connect(tanGain);
-        tanGain.connect(masterCompressor);
+        tanGain.connect(chainInlet);
         tanpuraNode.start(0);
+        activeSources.push(tanpuraNode);
       }
 
       function loopRhythm() {
         if (!isPlaying) return;
         const now = audioCtx.currentTime;
         parsed.events.forEach(ev => {
-          playStroke(audioCtx, masterCompressor, ev.bol, now + ev.offset, ev.gain, ev.accent);
+          playStroke(audioCtx, chainInlet, ev.bol, now + ev.offset, ev.gain);
         });
         timerId = setTimeout(loopRhythm, parsed.totalDuration * 1000);
       }
@@ -328,48 +318,54 @@
       loopRhythm();
     }
 
+    // Instant stop: Kills timers and terminates all scheduled hardware buffers
     function stopPlay() {
       isPlaying = false;
       clearTimeout(timerId);
-      if (tanpuraNode) {
-        try { tanpuraNode.stop(); } catch(e) {}
-        tanpuraNode = null;
-      }
+
+      activeSources.forEach(src => {
+        try {
+          src.stop(0);
+          src.disconnect();
+        } catch (e) {}
+      });
+      activeSources = [];
+      tanpuraNode = null;
+
       document.getElementById('playBtn').innerText = "Play";
       document.getElementById('playBtn').className = "btn btn-play";
     }
 
-    // High-impact offline master WAV export
     async function exportWav() {
-      const bpm = parseInt(document.getElementById('bpm').value) || 180;
+      const bpm = parseInt(document.getElementById('bpm').value) || 175;
       const parsed = parseEvents(bpm);
       if (!parsed.events.length) return;
 
       const totalDuration = parsed.totalDuration + 1.2;
       const sampleRate = 44100;
       const offlineCtx = new OfflineAudioContext(2, Math.ceil(sampleRate * totalDuration), sampleRate);
-      const comp = setupAudioChain(offlineCtx);
+      const chainInlet = setupAudioChain(offlineCtx);
 
       if (document.getElementById('tanpura').value === "sa_pa" && buffers["Bol/Acc/Tanpura_SaPa_G.wav"]) {
         const drone = offlineCtx.createBufferSource();
         drone.buffer = buffers["Bol/Acc/Tanpura_SaPa_G.wav"];
         drone.loop = true;
         const tg = offlineCtx.createGain();
-        tg.gain.value = 0.28;
+        tg.gain.value = 0.25;
         drone.connect(tg);
-        tg.connect(comp);
+        drone.connect(chainInlet);
         drone.start(0);
       }
 
       parsed.events.forEach(ev => {
-        playStroke(offlineCtx, comp, ev.bol, ev.offset, ev.gain, ev.accent);
+        playStroke(offlineCtx, chainInlet, ev.bol, ev.offset, ev.gain);
       });
 
       const buffer = await offlineCtx.startRendering();
       const wavBlob = bufferToWave(buffer, buffer.length);
       const a = document.createElement("a");
       a.href = URL.createObjectURL(wavBlob);
-      a.download = "raudra_veer_tabla.wav";
+      a.download = "war_dhol_track.wav";
       a.click();
     }
 
